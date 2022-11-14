@@ -13,30 +13,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.dwaynewillmakeit.toughfitnessapp.R
-import com.dwaynewillmakeit.toughfitnessapp.ui.navigation.Destinations
-import com.dwaynewillmakeit.toughfitnessapp.ui.navigation.Destinations.CREATE_WORKOUT_ROUTE
+import com.dwaynewillmakeit.toughfitnessapp.ui.destinations.SelectMuscleGroupScreenDestination
+import com.dwaynewillmakeit.toughfitnessapp.ui.destinations.WorkoutLogScreenDestination
 import com.dwaynewillmakeit.toughfitnessapp.ui.theme.ToughFitnessAppTheme
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavHostController) {
+@Destination(start = true)
+fun HomeScreen(navigator: DestinationsNavigator) {
 
     Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = { navController.navigate(CREATE_WORKOUT_ROUTE) }) {
+        FloatingActionButton(onClick = { navigator.navigate(WorkoutLogScreenDestination)}) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Log Workout")
         }
     }) {
         val modifier = Modifier.padding(it);
-        HomeScreenContent(navController)
+        HomeScreenContent()
     }
 }
 
 @Composable
-private fun HomeScreenContent(navController: NavHostController) {
+private fun HomeScreenContent() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +92,7 @@ private fun HomeScreenContent(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(24.dp))
         Button(
-            onClick = { navController.navigate(Destinations.LOGIN_ROUTE) }, modifier = Modifier
+            onClick = { /*TODO*/}, modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .width(300.dp)
                 .height(55.dp)
@@ -219,7 +220,7 @@ fun HomeScreenPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
-            HomeScreen(navController)
+//            HomeScreen()
         }
     }
 

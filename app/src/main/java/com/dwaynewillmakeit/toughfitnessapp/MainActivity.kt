@@ -6,15 +6,15 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.dwaynewillmakeit.toughfitnessapp.ui.login.LoginScreen
-import com.dwaynewillmakeit.toughfitnessapp.ui.navigation.AppNavGraph
+import com.dwaynewillmakeit.toughfitnessapp.ui.NavGraphs
 import com.dwaynewillmakeit.toughfitnessapp.ui.theme.ToughFitnessAppTheme
+import com.ramcosta.composedestinations.DestinationsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -24,10 +24,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AppNavGraph()
+                    DestinationsNavHost(navGraph = NavGraphs.root)
                 }
             }
         }
+//        exerciseViewModel.fetchExercises()
+//        Log.i("View Model State", exerciseViewModel.state.toString())
     }
 }
 

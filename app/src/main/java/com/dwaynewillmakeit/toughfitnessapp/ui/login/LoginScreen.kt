@@ -9,13 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import com.dwaynewillmakeit.toughfitnessapp.R
-import com.dwaynewillmakeit.toughfitnessapp.ui.navigation.Destinations.HOME_ROUTE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,7 +50,7 @@ fun LoginScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { navController.navigate(HOME_ROUTE)}, modifier = Modifier
+        Button(onClick = {/*TODO*/}, modifier = Modifier
             .align(Alignment.CenterHorizontally)
             .width(300.dp)
             .height(55.dp)) {
