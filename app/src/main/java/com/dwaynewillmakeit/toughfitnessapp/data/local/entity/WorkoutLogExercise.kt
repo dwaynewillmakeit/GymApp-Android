@@ -25,7 +25,7 @@ import androidx.room.PrimaryKey
 data class WorkoutLogExercise(
     @PrimaryKey val guid: String,
     @ColumnInfo(name = "workout_log_guid") val workoutLogGuid: String,
-    @ColumnInfo(name = "exercise_id") val exerciseId: Int,
+    @ColumnInfo(name = "exercise_id") val exerciseId: Long,
     @ColumnInfo(name = "exercise_name") val exercise_name: String,
     @ColumnInfo(name = "index") val index:Int
 

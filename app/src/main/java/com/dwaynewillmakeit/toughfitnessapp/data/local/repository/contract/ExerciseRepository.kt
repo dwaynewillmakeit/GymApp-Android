@@ -7,4 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseRepository {
 
     suspend fun getExercises(muscleGroupName:String): Flow<Resource<List<Exercise>>>
+
+    fun getExercisesBy(muscleGroupName: String): Flow<List<Exercise>>
 }

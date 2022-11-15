@@ -1,5 +1,7 @@
 package com.dwaynewillmakeit.toughfitnessapp.ui.workout_log
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,16 +24,40 @@ import com.dwaynewillmakeit.toughfitnessapp.ui.destinations.SelectMuscleGroupScr
 import com.dwaynewillmakeit.toughfitnessapp.ui.theme.ToughFitnessAppTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.EmptyDestinationsNavigator
+import com.ramcosta.composedestinations.result.NavResult
+import com.ramcosta.composedestinations.result.ResultRecipient
+import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Destination
 fun WorkoutLogScreen(
     navigator: DestinationsNavigator,
-    viewModel: WorkoutLogViewModel = hiltViewModel()
+    viewModel: WorkoutLogViewModel = hiltViewModel(),
+    resultRecipient: ResultRecipient<SelectMuscleGroupScreenDestination, String>
 ) {
     val state = viewModel.state
+
+     val TAG = "WorkoutLogScreen: "
+
+    Log.i(TAG, state.workoutLogExercises.toString())
+
+    resultRecipient.onNavResult { result ->
+        when (result) {
+            is NavResult.Canceled -> {
+                // `GoToProfileConfirmationDestination` was shown but it was canceled
+                // and no value was set (example: dialog/bottom sheet dismissed)
+            }
+            is NavResult.Value -> {
+                Log.i(TAG,result.value)
+
+                viewModel.addExercisesToLog(Json.decodeFromString(result.value))
+
+            }
+        }
+    }
 
 
     Scaffold(modifier = Modifier.padding(16.dp), floatingActionButton = {
@@ -121,7 +147,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
 
     Spacer(modifier = Modifier.height(12.dp))
 
-    val columnWeight = listOf<Float>(1F, 1.5F, 1F, 2F, 1F)
+    val columnWeight = listOf(1F, 1.5F, 1F, 2F, 1F)
 
     Divider(
         modifier = Modifier
@@ -136,7 +162,9 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
     ) {
         Text(
             text = workoutLogExercise.workoutLogExercise.exercise_name,
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
         )
 
         IconButton(onClick = { /*TODO*/ }) {
@@ -152,7 +180,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
             .padding(12.dp)
     ) {
 
-        Row (verticalAlignment = Alignment.CenterVertically){
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Sets",
                 Modifier.weight(columnWeight.component1()),
@@ -187,7 +215,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
         )
 
 
-        workoutLogExercise.workoutSets.forEachIndexed { index,workOutSet ->
+        workoutLogExercise.workoutSets.forEachIndexed { index, workOutSet ->
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 Text(
@@ -223,7 +251,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
                 }
             }
 
-            if(index != workoutLogExercise.workoutSets.size -1){
+            if (index != workoutLogExercise.workoutSets.size - 1) {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -255,7 +283,7 @@ fun WorkoutLogScreenPreview() {
         ) {
 
 
-            WorkoutLogScreen(EmptyDestinationsNavigator)
+//            WorkoutLogScreen(EmptyDestinationsNavigator, resultRecipient = )
         }
     }
 

@@ -42,4 +42,8 @@ class ExerciseRepositoryImpl @Inject constructor(
 
         }
     }
+
+     override fun getExercisesBy(muscleGroupName: String):Flow<List<Exercise>>{
+        return exerciseDao.find(muscleGroupName)
+    }
 }

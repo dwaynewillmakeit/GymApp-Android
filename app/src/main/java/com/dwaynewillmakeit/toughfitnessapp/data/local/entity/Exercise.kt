@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "exercises", indices = [Index(value = ["id"])])
+@kotlinx.serialization.Serializable
 data class Exercise(
     @PrimaryKey val id: Long,
     @ColumnInfo(name = "name") val name: String,

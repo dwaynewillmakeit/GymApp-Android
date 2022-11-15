@@ -27,18 +27,33 @@ import coil.size.Size
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.Exercise
 import com.dwaynewillmakeit.toughfitnessapp.ui.theme.ToughFitnessAppTheme
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.result.ResultBackNavigator
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Destination()
 fun ExerciseListScreen(
     muscleGroup: String,
-    viewModel: ExerciseViewModel = hiltViewModel()
+    viewModel: ExerciseViewModel = hiltViewModel(),
+    resultNavigator: ResultBackNavigator<String>
 ) {
 
     val state = viewModel.state
 
-    viewModel.fetchExercises(muscleGroup);
+    val selectedExercises = mutableMapOf<Long,Exercise>()
+
+    val TAG = "WorkoutLogScreen: "
+
+    Log.i(TAG,"Encoded: "+ Json.encodeToString(state.exercises))
+    Log.i(TAG,"Decoded: "+ Json.decodeFromString<List<ExerciseState>>(Json.encodeToString(state.exercises)).toString())
+
+
+
+
+    viewModel.fetchExercisesByMuscleGroup(muscleGroup);
 
     Scaffold(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -59,13 +74,13 @@ fun ExerciseListScreen(
                 items(state.exercises.size) { i ->
 
                     val exercise = state.exercises[i]
-                    ExerciseCard(exercise, viewModel = viewModel)
+                    ExerciseCard(exercise,selectedExercises)
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
             }
 
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { resultNavigator.navigateBack(Json.encodeToString(selectedExercises.map { it.value })) }) {
                 Text(text = "Add to my plan")
             }
         }
@@ -75,14 +90,32 @@ fun ExerciseListScreen(
 
 @Composable
 private fun ExerciseCard(
-    exercise: Exercise,
-    modifier: Modifier = Modifier,
-    viewModel: ExerciseViewModel
+    exerciseState: ExerciseState,
+    selectedExercises: MutableMap<Long, Exercise>,
 ) {
 
     var isSelected by remember { mutableStateOf(false) }
 
+    val exercise = exerciseState.exercise
+
     if(isSelected){
+
+        if(!selectedExercises.containsKey(exercise.id)){
+            selectedExercises[exercise.id] = exercise
+        }
+    }else{
+        if(selectedExercises.containsKey(exercise.id)){
+            selectedExercises.remove(exercise.id)
+        }
+
+    }
+
+    Log.i("ExerciseList: ",selectedExercises.toString())
+
+
+
+
+    if(exerciseState.isSelected){
         Log.i("ExerciseList","${exercise.name} Selected")
     }else{
         Log.i("ExerciseList","${exercise.name} Not Selected")
