@@ -1,6 +1,7 @@
 package com.dwaynewillmakeit.toughfitnessapp.ui.workout_log
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -35,103 +36,53 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
 
     fun addExercisesToLog(exercises: List<Exercise>) {
 
-        val exerciseList = mutableListOf<WorkoutLogExerciseState>()
-        exerciseList.addAll(state.workoutLogExercises)
-        exerciseList.addAll(buildWorkoutLogExerciseState(exercises))
+        val exerciseList = mutableStateMapOf<String, WorkoutLogExerciseState>()
+        exerciseList.putAll(state.workoutLogExercises)
+        exerciseList.putAll(buildWorkoutLogExerciseState(exercises))
 
         state = state.copy(
             workoutLogExercises = exerciseList
         )
     }
 
-    private fun buildWorkoutLogExerciseState(exercises: List<Exercise>): List<WorkoutLogExerciseState> {
+    private fun buildWorkoutLogExerciseState(exercises: List<Exercise>): Map<String, WorkoutLogExerciseState> {
 
-        return exercises.map { exercise ->
+        val exerciseMap = mutableMapOf<String, WorkoutLogExerciseState>()
 
-            WorkoutLogExerciseState(
+        exercises.map { exercise ->
+
+            val exerciseUUID = UUID.randomUUID().toString()
+
+            val workoutLogExercise = WorkoutLogExerciseState(
                 workoutLogExercise = WorkoutLogExercise(
-                    UUID.randomUUID().toString(),
+                    exerciseUUID,
                     "NEED TO SET",
                     exercise.id,
                     exercise.name,
                     0
-                ),
-                workoutSets = emptyList()
+                )
             )
+
+            exerciseMap[exerciseUUID] = workoutLogExercise
+
         }
+
+        return exerciseMap
     }
 
-    private fun testData(): List<WorkoutLogExerciseState> {
+    fun addSet(workOutLogExerciseUUID: String) {
 
-        return listOf(
+        val workoutSetUUID = UUID.randomUUID().toString()
 
-            WorkoutLogExerciseState(
-                workoutLogExercise = WorkoutLogExercise(
-                    "sadsa",
-                    "sdasd",
-                    1,
-                    "Barbell Bench Press",
-                    0
-                ),
-                workoutSets = listOf(
-                    WorkoutSet(
-                        "123450",
-                        "sdf",
-                        1,
-                        215F,
-                        5,
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                        0
-                    ),
-                    WorkoutSet("123450", "sdf", 1, 215F, 5, "", 0),
-                    WorkoutSet("123450", "sdf", 1, 215F, 5, "", 0),
-                )
-            ),
-            WorkoutLogExerciseState(
-                workoutLogExercise = WorkoutLogExercise(
-                    "sadsa",
-                    "sdasd",
-                    1,
-                    "Barbell Standing Reverse Grip Curl",
-                    0
-                ),
-                workoutSets = listOf(
-                    WorkoutSet("123450", "sdf", 1, 215F, 5, "", 0),
-                    WorkoutSet(
-                        "123450",
-                        "sdf",
-                        1,
-                        215F,
-                        5,
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                        0
-                    ),
-                    WorkoutSet("123450", "sdf", 1, 215F, 5, "", 0),
-                )
-            ),
-            WorkoutLogExerciseState(
-                workoutLogExercise = WorkoutLogExercise(
-                    "sadsa",
-                    "sdasd",
-                    1,
-                    "Dumbbell Bicep Curl",
-                    0
-                ),
-                workoutSets = listOf(
-                    WorkoutSet("123450", "sdf", 1, 215F, 5, "", 0),
-                    WorkoutSet(
-                        "123450",
-                        "sdf",
-                        1,
-                        215F,
-                        5,
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                        0
-                    ),
-                    WorkoutSet("123450", "sdf", 1, 215F, 5, "", 0),
-                )
-            )
-        )
+        state.workoutLogExercises[workOutLogExerciseUUID]!!.workoutSets[workoutSetUUID] = WorkoutSet(workoutSetUUID, "NO IMPLEMENTED", 0, 2F, 5, "", 0)
+
     }
+
+    fun removeSet(workOutLogExerciseUUID: String,workOutSetUUID:String){
+
+       state.workoutLogExercises[workOutLogExerciseUUID]?.workoutSets?.remove(workOutSetUUID)
+
+    }
+
 
 }

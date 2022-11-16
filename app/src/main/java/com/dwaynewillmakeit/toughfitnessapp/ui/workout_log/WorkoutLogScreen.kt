@@ -1,7 +1,6 @@
 package com.dwaynewillmakeit.toughfitnessapp.ui.workout_log
 
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,7 +24,6 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
@@ -40,7 +37,7 @@ fun WorkoutLogScreen(
 ) {
     val state = viewModel.state
 
-     val TAG = "WorkoutLogScreen: "
+    val TAG = "WorkoutLogScreen: "
 
     Log.i(TAG, state.workoutLogExercises.toString())
 
@@ -51,7 +48,7 @@ fun WorkoutLogScreen(
                 // and no value was set (example: dialog/bottom sheet dismissed)
             }
             is NavResult.Value -> {
-                Log.i(TAG,result.value)
+                Log.i(TAG, result.value)
 
                 viewModel.addExercisesToLog(Json.decodeFromString(result.value))
 
@@ -131,7 +128,9 @@ fun WorkoutLogScreen(
 
                     state.workoutLogExercises.forEach { workoutLogExercise ->
 
-                        ViewExerciseSet(workoutLogExercise)
+                        ViewExerciseSet(
+                            workoutLogExercise, viewModel
+                        )
 
                     }
 
@@ -143,7 +142,10 @@ fun WorkoutLogScreen(
 }
 
 @Composable
-fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
+fun ViewExerciseSet(
+    workoutLogExerciseState: Map.Entry<String, WorkoutLogExerciseState>,
+    viewModel: WorkoutLogViewModel
+) {
 
     Spacer(modifier = Modifier.height(12.dp))
 
@@ -161,7 +163,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = workoutLogExercise.workoutLogExercise.exercise_name,
+            text = workoutLogExerciseState.value.workoutLogExercise.exercise_name,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -214,35 +216,37 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
                 .height(1.dp)
         )
 
+        val workoutSets = workoutLogExerciseState.value.workoutSets.values
 
-        workoutLogExercise.workoutSets.forEachIndexed { index, workOutSet ->
+        workoutSets.forEachIndexed {index, workoutSets ->
+
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 Text(
-                    text = workOutSet.set.toString(),
+                    text = workoutSets.set.toString(),
                     Modifier.weight(columnWeight.component1()),
                     textAlign = TextAlign.Center, fontSize = 14.sp
                 )
                 Text(
-                    text = "${workOutSet.weight}lbs",
+                    text = "${workoutSets.weight}lbs",
                     Modifier
                         .weight(columnWeight.component2()),
                     textAlign = TextAlign.Center,
                     fontSize = 14.sp
                 )
                 Text(
-                    text = "${workOutSet.repCount}",
+                    text = "${workoutSets.repCount}",
                     Modifier.weight(columnWeight.component3()),
                     textAlign = TextAlign.Center,
                     fontSize = 14.sp
                 )
                 Text(
-                    text = workOutSet.notes,
+                    text = workoutSets.notes,
                     Modifier.weight(columnWeight.component4()),
                     fontSize = 14.sp
                 )
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { viewModel.removeSet(workoutLogExerciseState.key,workoutSets.guid) },
                     Modifier
                         .weight(columnWeight.component5())
                         .align(CenterVertically)
@@ -251,7 +255,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
                 }
             }
 
-            if (index != workoutLogExercise.workoutSets.size - 1) {
+            if (index != workoutLogExerciseState.value.workoutSets.size - 1) {
                 Divider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -262,7 +266,7 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
 
 
         Spacer(modifier = Modifier.height(4.dp))
-        Button(onClick = { /*TODO*/ }, Modifier.align(Alignment.End)) {
+        Button(onClick = { viewModel.addSet(workoutLogExerciseState.key) }, Modifier.align(Alignment.End)) {
             Text(text = "Log Set")
         }
 
@@ -273,7 +277,6 @@ fun ViewExerciseSet(workoutLogExercise: WorkoutLogExerciseState) {
 
 
 @Composable
-@Preview
 fun WorkoutLogScreenPreview() {
 
     ToughFitnessAppTheme {
