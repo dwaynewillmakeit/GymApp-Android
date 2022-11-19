@@ -17,6 +17,7 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
 
     var state by mutableStateOf(WorkoutLogState())
 
+
     init {
         fetchWorkoutLog()
     }
@@ -32,6 +33,10 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
     private fun fetchWorkoutLog() {
 
         state
+    }
+
+    fun setWorkoutLogUUID(uuid:String){
+        state = state.copy(workoutLogUUID = uuid)
     }
 
     fun addExercisesToLog(exercises: List<Exercise>) {
@@ -70,17 +75,61 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
         return exerciseMap
     }
 
-    fun addSet(workOutLogExerciseUUID: String) {
+    fun addWorkoutSet(
+        workOutLogExerciseUUID: String,
+        weight: Float,
+        repCount: Int,
+        notes: String,
+        setCount: Int
+    ) {
 
         val workoutSetUUID = UUID.randomUUID().toString()
 
-        state.workoutLogExercises[workOutLogExerciseUUID]!!.workoutSets[workoutSetUUID] = WorkoutSet(workoutSetUUID, "NO IMPLEMENTED", 0, 2F, 5, "", 0)
+        state.workoutLogExercises[workOutLogExerciseUUID]!!.workoutSets[workoutSetUUID] =
+            WorkoutSet(workoutSetUUID, workOutLogExerciseUUID, setCount, weight, repCount, notes, 0)
 
     }
 
-    fun removeSet(workOutLogExerciseUUID: String,workOutSetUUID:String){
+    fun modifyWorkoutSet(
+        workOutLogExerciseUUID: String,
+        workoutSetUUID: String,
+        weight: Float,
+        repCount: Int,
+        notes: String
+    ) {
 
-       state.workoutLogExercises[workOutLogExerciseUUID]?.workoutSets?.remove(workOutSetUUID)
+        val setCount =
+            state.workoutLogExercises[workOutLogExerciseUUID]!!.workoutSets[workoutSetUUID]!!.set
+
+        state.workoutLogExercises[workOutLogExerciseUUID]!!.workoutSets[workoutSetUUID] =
+            WorkoutSet(workoutSetUUID, workOutLogExerciseUUID, setCount, weight, repCount, notes, 0)
+
+
+    }
+
+    fun removeWorkoutSet(workOutLogExerciseUUID: String, workOutSetUUID: String) {
+
+        state.workoutLogExercises[workOutLogExerciseUUID]?.workoutSets?.remove(workOutSetUUID)
+
+        sortWorkOutSetsBySetCount(
+            workOutLogExerciseUUID
+        )
+
+
+    }
+
+
+   private fun sortWorkOutSetsBySetCount(
+        workOutLogExerciseUUID: String
+    ) {
+
+        state.workoutLogExercises[workOutLogExerciseUUID]?.workoutSets!!.toList()
+            .sortedBy { (_, workOutSet) -> workOutSet.set }
+            .mapIndexed { index, pair ->
+                state.workoutLogExercises[workOutLogExerciseUUID]!!.workoutSets[pair.first] =
+                    pair.second.copy(set = index + 1)
+
+            }
 
     }
 
