@@ -9,6 +9,8 @@ import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.Exercise
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutLogExercise
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutSet
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.*
 import javax.inject.Inject
 
@@ -35,7 +37,7 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
         state
     }
 
-    fun setWorkoutLogUUID(uuid:String){
+    fun setWorkoutLogUUID(uuid: String) {
         state = state.copy(workoutLogUUID = uuid)
     }
 
@@ -119,7 +121,7 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
     }
 
 
-   private fun sortWorkOutSetsBySetCount(
+    private fun sortWorkOutSetsBySetCount(
         workOutLogExerciseUUID: String
     ) {
 
@@ -131,6 +133,14 @@ class WorkoutLogViewModel @Inject constructor() : ViewModel() {
 
             }
 
+    }
+
+    fun setStartDate(date: LocalDate) {
+        state = state.copy(startDate = date)
+    }
+
+    fun setStartTime(time: LocalTime) {
+        state = state.copy(startTime = time)
     }
 
 

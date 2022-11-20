@@ -113,6 +113,10 @@ dependencies {
     //Serialization
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1"
 
+    //Dialogs
+    implementation "io.github.vanpra.compose-material-dialogs:core:0.9.0"
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:0.9.0"
+
 
 }
 
