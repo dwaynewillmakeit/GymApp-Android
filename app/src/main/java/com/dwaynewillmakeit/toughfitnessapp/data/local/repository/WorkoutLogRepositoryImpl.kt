@@ -2,9 +2,8 @@ package com.dwaynewillmakeit.toughfitnessapp.data.local.repository
 
 import com.dwaynewillmakeit.toughfitnessapp.data.local.GymDatabase
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutLog
-import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutLogExercise
-import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutSet
 import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.contract.WorkoutLogRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class WorkoutLogRepositoryImpl @Inject constructor(private val gymDatabase: GymDatabase) :
@@ -13,15 +12,22 @@ class WorkoutLogRepositoryImpl @Inject constructor(private val gymDatabase: GymD
     private val workoutLogDao = gymDatabase.workoutLogDao
 
     override suspend fun insertWorkoutLog(
-        workoutLog: WorkoutLog,
-        workoutLogExercises: List<WorkoutLogExercise>,
-        workoutSets: List<WorkoutSet>
+        workoutLog: WorkoutLog
     ) {
-
         workoutLogDao.insertLog(workoutLog)
+    }
 
-        workoutLogDao.insertExercise(workoutLogExercises)
+    override fun fetchRecentWorkouts(): Flow<List<WorkoutLog>> {
 
-        workoutLogDao.insertSets(workoutSets)
+        return workoutLogDao.fetchRecentWorkouts()
+    }
+
+    override fun fetchUpcomingWorkouts(): Flow<List<WorkoutLog>> {
+
+        return workoutLogDao.fetchUpcomingWorkouts()
+    }
+
+    override suspend fun fetchWorkoutLog(workoutLogUUID: String): WorkoutLog {
+        return workoutLogDao.fetchWorkoutLog(workoutLogUUID)
     }
 }

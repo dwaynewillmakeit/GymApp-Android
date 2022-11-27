@@ -1,9 +1,13 @@
 package com.dwaynewillmakeit.toughfitnessapp.di
 
 import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.ExerciseRepositoryImpl
+import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.WorkoutLogExerciseRepositoryImpl
 import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.WorkoutLogRepositoryImpl
+import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.WorkoutSetRepositoryImpl
 import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.contract.ExerciseRepository
+import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.contract.WorkoutLogExerciseRepository
 import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.contract.WorkoutLogRepository
+import com.dwaynewillmakeit.toughfitnessapp.data.local.repository.contract.WorkoutSetRepository
 import com.dwaynewillmakeit.toughfitnessapp.data.remote.repository.RemoteEquipmentRepositoryImpl
 import com.dwaynewillmakeit.toughfitnessapp.data.remote.repository.RemoteExerciseRepositoryImpl
 import com.dwaynewillmakeit.toughfitnessapp.data.remote.repository.contract.RemoteEquipmentRepository
@@ -38,4 +42,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindWorkoutLogRepository(workoutLogRepository: WorkoutLogRepositoryImpl): WorkoutLogRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWorkoutLogExerciseRepository(workoutLogExerciseRepository: WorkoutLogExerciseRepositoryImpl): WorkoutLogExerciseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWorkoutSetRepository(workoutSetRepository: WorkoutSetRepositoryImpl): WorkoutSetRepository
 }

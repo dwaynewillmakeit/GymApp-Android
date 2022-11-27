@@ -1,6 +1,8 @@
 package com.dwaynewillmakeit.toughfitnessapp.ui.workout_log
 
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,7 +36,8 @@ import java.time.format.DateTimeFormatter
 fun WorkoutLogScreen(
     navigator: DestinationsNavigator,
     viewModel: WorkoutLogViewModel = hiltViewModel(),
-    resultRecipient: ResultRecipient<SelectMuscleGroupScreenDestination, String>
+    resultRecipient: ResultRecipient<SelectMuscleGroupScreenDestination, String>,
+    workoutLogUUID: String?
 ) {
     val state = viewModel.state
 
@@ -41,9 +45,17 @@ fun WorkoutLogScreen(
 
     val dateDialogState = rememberMaterialDialogState()
     val timeDialogState = rememberMaterialDialogState()
+    var openSaveDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var exerciseIndex by remember { mutableStateOf(1) }
 
 
+    if (workoutLogUUID != null && !state.isAlreadyPersisted) {
 
+        viewModel.fetchWorkOutLog(workoutLogUUID)
+    }
 
     Log.i(TAG, state.workoutLogExercises.toString())
 
@@ -161,13 +173,16 @@ fun WorkoutLogScreen(
                     )
 
 
-                    state.workoutLogExercises.forEach { workoutLogExercise ->
+                    state.workoutLogExercises.toList()
+                        .sortedBy { (_, value) -> value.workoutLogExercise.index }
+                        .toMap()
+                        .forEach { workoutLogExercise ->
 
-                        ExerciseLog(
-                            workoutLogExercise, viewModel
-                        )
+                            ExerciseLog(
+                                workoutLogExercise, viewModel
+                            )
 
-                    }
+                        }
 
 
                 }
@@ -183,7 +198,7 @@ fun WorkoutLogScreen(
                     verticalArrangement = Arrangement.Bottom
                 ) {
 
-                    Button(onClick = { /*TODO*/ }) {
+                    Button(onClick = { openSaveDialog = true }) {
                         Text(text = "Save")
                     }
                 }
@@ -194,6 +209,26 @@ fun WorkoutLogScreen(
     DatePickerDialog(dialogState = dateDialogState, onDateChange = { viewModel.setStartDate(it) })
 
     TimePickerDialog(dialogState = timeDialogState, onTimeChanged = { viewModel.setStartTime(it) })
+
+    WorkoutDialog(
+        openSaveDialog,
+        { openSaveDialog = !openSaveDialog },
+        { viewModel.saveWorkout() },
+        "Title",
+        "Are you ready to save"
+    )
+
+    if (state.savedSuccessful == true) {
+        Toast.makeText(LocalContext.current, "Workout saved", Toast.LENGTH_SHORT).show()
+    }
+
+    BackHandler(enabled = true) {
+        if (state.isAlreadyPersisted) {
+            viewModel.saveWorkout()
+
+        }
+        navigator.popBackStack()
+    }
 }
 
 

@@ -7,6 +7,8 @@ import androidx.room.TypeConverters
 import com.dwaynewillmakeit.toughfitnessapp.data.local.converter.DateConverter
 import com.dwaynewillmakeit.toughfitnessapp.data.local.dao.ExerciseDao
 import com.dwaynewillmakeit.toughfitnessapp.data.local.dao.WorkoutLogDao
+import com.dwaynewillmakeit.toughfitnessapp.data.local.dao.WorkoutLogExerciseDao
+import com.dwaynewillmakeit.toughfitnessapp.data.local.dao.WorkoutSetDao
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.Exercise
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutLog
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutLogExercise
@@ -22,4 +24,6 @@ abstract class GymDatabase : RoomDatabase() {
 
     abstract val exerciseDao: ExerciseDao
     abstract val workoutLogDao: WorkoutLogDao
+    abstract val workoutSetDao:WorkoutSetDao
+    abstract val workoutLogExerciseDao: WorkoutLogExerciseDao
 }

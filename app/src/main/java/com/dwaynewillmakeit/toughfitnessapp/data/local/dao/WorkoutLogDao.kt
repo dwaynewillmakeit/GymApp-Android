@@ -2,6 +2,7 @@ package com.dwaynewillmakeit.toughfitnessapp.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.dwaynewillmakeit.toughfitnessapp.data.local.entity.WorkoutLog
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 interface WorkoutLogDao {
 
     //Workout Logs
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLog(workoutLog: WorkoutLog)
 
     @Update
@@ -22,21 +23,21 @@ interface WorkoutLogDao {
     @Query("SELECT * FROM workout_log")
      fun fetchAll(): Flow<List<WorkoutLog>>
 
-    //Workout Log Exercises
-    @Insert
-    suspend fun insertExercise(workoutLogExercises: List<WorkoutLogExercise>)
+    @Query("SELECT * FROM workout_log WHERE start_date_time<= DATE() order by start_date_time desc")
+    fun fetchRecentWorkouts():Flow<List<WorkoutLog>>
 
-    @Insert
-    suspend fun updateExercise(workoutLogExercises: List<WorkoutLogExercise>)
+    @Query("SELECT * FROM workout_log WHERE start_date_time > DATE() order by start_date_time asc")
+    fun fetchUpcomingWorkouts():Flow<List<WorkoutLog>>
+
+    @Query("SELECT * FROM workout_log WHERE guid = :workoutLogUUID")
+    suspend fun fetchWorkoutLog(workoutLogUUID: String): WorkoutLog
 
 
-    //Workout Set
-    @Insert
-    suspend fun insertSets(workoutSets: List<WorkoutSet>)
 
-    @Update
-    suspend fun updateSets(workoutSets: List<WorkoutSet>)
 
-    @Query("SELECT * FROM workout_set WHERE workout_exercise_guid =:workoutLogExerciseGuid")
-    fun find(workoutLogExerciseGuid: String):Flow<List<WorkoutSet>>
+
+
+
+
+
 }

@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.TimeZone
+import java.util.*
 
 
 class DateConverter {
@@ -17,6 +17,6 @@ class DateConverter {
 
     @TypeConverter
     fun longToLocalDateTime(datetime: Long):LocalDateTime{
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(datetime),TimeZone.getDefault().toZoneId())
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(datetime),TimeZone.getDefault().toZoneId())
     }
 }

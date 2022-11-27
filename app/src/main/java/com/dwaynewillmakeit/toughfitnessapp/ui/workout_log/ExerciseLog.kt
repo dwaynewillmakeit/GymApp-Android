@@ -43,8 +43,9 @@ fun ExerciseLog(
     }
 
     var setCount by remember {
-        mutableStateOf(1)
+        mutableStateOf(workoutLogExerciseState.value.lastSetCount)
     }
+
 
     var workOutSetUUID by remember {
         mutableStateOf("")
@@ -182,7 +183,7 @@ fun ExerciseLog(
                         weight.toFloat(),
                         repCount = repCount.toInt(),
                         notes = notes,
-                        setCount++
+                        ++setCount
                     )
                 } else {
                     viewModel.modifyWorkoutSet(
